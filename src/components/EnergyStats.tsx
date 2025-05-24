@@ -1,11 +1,11 @@
 'use client'
 
-import { 
-  BoltIcon, 
-  SunIcon, 
-  BatteryIcon, 
+import {
+  BoltIcon,
+  SunIcon,
+  CircleStackIcon,
   CurrencyDollarIcon,
-  LeafIcon,
+  GlobeAltIcon,
   ArrowUpIcon,
   ArrowDownIcon
 } from '@heroicons/react/24/outline'
@@ -36,7 +36,7 @@ export default function EnergyStats() {
     {
       name: 'Current Balance',
       value: `${energyData.currentBalance.toFixed(1)} kWh`,
-      icon: BatteryIcon,
+      icon: CircleStackIcon,
       color: 'text-energy-trading',
       bgColor: 'bg-purple-50',
       change: '+8.7%',
@@ -63,7 +63,7 @@ export default function EnergyStats() {
     {
       name: 'Carbon Offset',
       value: `${energyData.carbonOffset.toFixed(1)} kg CO₂`,
-      icon: LeafIcon,
+      icon: GlobeAltIcon,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       change: '+18.9%',
@@ -74,12 +74,12 @@ export default function EnergyStats() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Energy Overview</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon
           const ChangeIcon = stat.changeType === 'increase' ? ArrowUpIcon : ArrowDownIcon
-          
+
           return (
             <div key={stat.name} className="stat-card">
               <div className="flex items-center">
@@ -91,14 +91,14 @@ export default function EnergyStats() {
                   <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                 </div>
               </div>
-              
+
               <div className="mt-4 flex items-center">
-                <ChangeIcon 
+                <ChangeIcon
                   className={`h-4 w-4 ${
                     stat.changeType === 'increase' ? 'text-green-500' : 'text-red-500'
-                  }`} 
+                  }`}
                 />
-                <span 
+                <span
                   className={`ml-1 text-sm font-medium ${
                     stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
                   }`}
