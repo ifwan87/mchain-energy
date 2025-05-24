@@ -52,14 +52,14 @@ maschain/
 
 ### Phase 1: Core Infrastructure (Weeks 1-4)
 - [x] Project setup and structure
-- [ ] Smart contract implementation
-- [ ] Oracle service development
-- [ ] IoT meter simulation
+- [x] Smart contract implementation
+- [x] Oracle service development
+- [x] IoT meter simulation
 
 ### Phase 2: Application Development (Weeks 5-8)
-- [ ] Frontend dashboard
-- [ ] Wallet integration
-- [ ] Trading marketplace
+- [x] Frontend dashboard
+- [x] Wallet integration
+- [x] Trading marketplace
 - [ ] Analytics features
 
 ### Phase 3: Integration & Testing (Weeks 9-12)
@@ -91,8 +91,8 @@ maschain/
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd maschain
+git clone https://github.com/ifwan87/mchain-energy.git
+cd mchain-energy
 
 # Install dependencies
 npm install
