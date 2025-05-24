@@ -1,0 +1,25 @@
+[package]
+name = "energy-market"
+version = "0.1.0"
+description = "Energy Trading Market Smart Contract for Maaschain"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "energy_market"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+borsh = { workspace = true }
+thiserror = { workspace = true }
+solana-program = { workspace = true }
+anchor-lang = { workspace = true }
+anchor-spl = { workspace = true }
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []

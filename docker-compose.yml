@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: maschain_postgres
+    environment:
+      POSTGRES_DB: maschain_energy
+      POSTGRES_USER: maschain
+      POSTGRES_PASSWORD: maschain_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - maschain_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: maschain_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - maschain_network
+
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: maschain_mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+    networks:
+      - maschain_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: maschain_backend
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://maschain:maschain_password@postgres:5432/maschain_energy
+      - REDIS_URL=redis://redis:6379
+      - MQTT_BROKER_HOST=mosquitto
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+      - mosquitto
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - maschain_network
+
+  # Frontend Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: maschain_frontend
+    environment:
+      - NEXT_PUBLIC_SOLANA_NETWORK=devnet
+      - NEXT_PUBLIC_RPC_ENDPOINT=https://api.devnet.solana.com
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - maschain_network
+
+  # IoT Meter Simulator
+  iot-simulator:
+    build:
+      context: ./iot-integration
+      dockerfile: Dockerfile
+    container_name: maschain_iot_simulator
+    environment:
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+    depends_on:
+      - mosquitto
+      - backend
+    volumes:
+      - ./iot-integration:/app
+    networks:
+      - maschain_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  mosquitto_data:
+  mosquitto_logs:
+
+networks:
+  maschain_network:
+    driver: bridge
