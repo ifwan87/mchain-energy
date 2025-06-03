@@ -14,10 +14,15 @@
     "smart-contracts:build": "cd smart-contracts && cargo build-bpf",
     "smart-contracts:test": "cd smart-contracts && cargo test",
     "iot:start": "cd iot-integration && python meter-client/meter_client.py",
-    "backend:dev": "cd backend && npm run dev"
+    "backend:dev": "cd backend && npm run dev",
+    "maschain:deploy": "ts-node scripts/deploy-maschain-contracts.ts",
+    "maschain:deploy:testnet": "MASCHAIN_ENVIRONMENT=testnet ts-node scripts/deploy-maschain-contracts.ts",
+    "maschain:deploy:mainnet": "MASCHAIN_ENVIRONMENT=mainnet ts-node scripts/deploy-maschain-contracts.ts",
+    "maschain:init": "ts-node scripts/init-maschain.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "axios": "^1.6.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "next": "^14.2.29",

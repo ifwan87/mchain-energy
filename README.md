@@ -1,15 +1,16 @@
-# Blockchain-Based Energy Trading Platform Using Maaschain
+# Blockchain-Based Energy Trading Platform Using MasChain L1
 
-A comprehensive platform for peer-to-peer energy trading using blockchain technology, IoT integration, and smart contracts.
+A comprehensive platform for peer-to-peer energy trading using MasChain L1 blockchain technology, IoT integration, and smart contracts.
 
 ## Architecture Overview
 
 ### Core Components
 
-1. **Maaschain Blockchain Layer**
-   - Smart contracts for energy trading
-   - Native token for energy credits
-   - Validator nodes for transaction verification
+1. **MasChain L1 Blockchain Layer**
+   - Smart contracts for energy trading via MasChain API
+   - Energy Credit (EC) tokens for peer-to-peer trading
+   - Proof of Authority consensus for energy efficiency
+   - Enterprise-grade security and compliance
 
 2. **IoT Integration Layer**
    - Energy meter data collection
