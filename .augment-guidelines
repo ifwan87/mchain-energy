@@ -1,0 +1,558 @@
+# .augment-guidelines
+# MasChain Energy Trading Platform - Developer Guidelines
+
+## 📋 **Project Overview & Architecture**
+
+### **Project Description**
+The MasChain Energy Trading Platform is a blockchain-based peer-to-peer energy trading system that enables homeowners with renewable energy sources (solar panels, wind turbines) to trade excess energy directly with their neighbors using MasChain L1 blockchain technology.
+
+### **Technology Stack**
+- **Blockchain**: MasChain L1 (Malaysia's Layer 1 Proof of Authority blockchain)
+- **Frontend**: React/Next.js with TypeScript and Tailwind CSS
+- **Backend**: Node.js/Express with TypeScript
+- **Smart Contracts**: MasChain Smart Contract Creation API
+- **IoT Integration**: Python with MQTT for real-time meter data
+- **Database**: PostgreSQL with Redis caching
+- **State Management**: Zustand for React state management
+- **Wallet Integration**: MasChain wallet system
+
+### **System Architecture**
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │   MasChain L1   │
+│   (React/Next)  │◄──►│  (Node.js/API)  │◄──►│   Blockchain    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   User Wallet   │    │   Database      │    │  Smart Contracts│
+│   (MasChain)    │    │ (PostgreSQL)    │    │  (Energy Trade) │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │  IoT Integration│
+                       │   (Python/MQTT) │
+                       └─────────────────┘
+```
+
+## 🚀 **Development Environment Setup**
+
+### **Prerequisites**
+- Node.js 18+ (LTS recommended)
+- Python 3.9+ with pip
+- Docker & Docker Compose
+- Git
+- MasChain Enterprise Portal account
+
+### **Installation Steps**
+
+1. **Clone Repository**
+```bash
+git clone https://github.com/ifwan87/mchain-energy.git
+cd mchain-energy
+```
+
+2. **Environment Configuration**
+```bash
+cp .env.example .env
+# Edit .env with your MasChain API credentials
+```
+
+3. **Install Dependencies**
+```bash
+# Frontend and backend dependencies
+npm install
+
+# Backend dependencies
+cd backend && npm install && cd ..
+
+# IoT integration dependencies
+cd iot-integration && pip install -r requirements.txt && cd ..
+```
+
+4. **MasChain Setup**
+- Register at https://portal.maschain.com
+- Complete KYC/KYB process
+- Subscribe to required services (Token Management, Wallet Management, Smart Contract Creation)
+- Generate API keys and update .env file
+
+5. **Database Setup**
+```bash
+# Using Docker (recommended)
+docker-compose up -d postgres redis mosquitto
+
+# Or install locally: PostgreSQL, Redis, Mosquitto MQTT
+```
+
+6. **Start Development Environment**
+```bash
+# Start all services
+npm run dev                    # Frontend
+npm run backend:dev           # Backend API
+npm run iot:start            # IoT simulator
+```
+
+### **Environment Variables**
+```bash
+# MasChain L1 Configuration
+MASCHAIN_ENVIRONMENT=testnet
+MASCHAIN_API_KEY=your_api_key_here
+MASCHAIN_API_SECRET=your_api_secret_here
+MASCHAIN_PROJECT_ID=your_project_id_here
+
+# Application Configuration
+NODE_ENV=development
+PORT=3001
+FRONTEND_URL=http://localhost:3000
+
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/maschain_energy
+REDIS_URL=redis://localhost:6379
+```
+
+## 📁 **Project Structure & Organization**
+
+### **Directory Structure**
+```
+mchain-energy/
+├── src/                          # Frontend source code
+│   ├── app/                      # Next.js app directory
+│   ├── components/               # React components
+│   │   ├── providers/            # Context providers
+│   │   ├── ui/                   # UI components
+│   │   └── trading/              # Trading-specific components
+│   ├── hooks/                    # Custom React hooks
+│   ├── store/                    # Zustand state management
+│   └── utils/                    # Utility functions
+├── backend/                      # Backend API server
+│   ├── src/
+│   │   ├── config/               # Configuration files
+│   │   ├── routes/               # API route handlers
+│   │   ├── services/             # Business logic services
+│   │   ├── middleware/           # Express middleware
+│   │   └── types/                # TypeScript type definitions
+├── iot-integration/              # IoT and oracle services
+│   ├── meter-client/             # Energy meter client
+│   ├── oracle-service/           # Data validation service
+│   └── simulators/               # Testing simulators
+├── scripts/                      # Deployment and utility scripts
+├── docs/                         # Documentation
+├── deployments/                  # Contract deployment records
+└── tests/                        # Test files
+```
+
+### **File Naming Conventions**
+- **Components**: PascalCase (e.g., `EnergyDashboard.tsx`)
+- **Hooks**: camelCase with "use" prefix (e.g., `useEnergyData.ts`)
+- **Services**: camelCase (e.g., `energyTradingService.ts`)
+- **Types**: PascalCase with "Type" suffix (e.g., `EnergyOfferType.ts`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `API_ENDPOINTS.ts`)
+
+### **Component Organization**
+```typescript
+// Component structure example
+src/components/trading/
+├── EnergyOfferCard.tsx           # Individual offer display
+├── EnergyMarketplace.tsx         # Main marketplace component
+├── TradingDashboard.tsx          # Trading overview
+├── OfferCreationForm.tsx         # Create new offers
+└── TradeHistoryTable.tsx        # Transaction history
+```
+
+## 🔄 **Development Workflows**
+
+### **Git Workflow**
+1. **Branch Naming**: `feature/description`, `bugfix/description`, `hotfix/description`
+2. **Commit Messages**: Use conventional commits format
+   ```
+   feat: add energy offer creation functionality
+   fix: resolve wallet connection issue
+   docs: update API documentation
+   ```
+3. **Pull Request Process**:
+   - Create feature branch from `main`
+   - Implement changes with tests
+   - Submit PR with detailed description
+   - Code review required before merge
+
+### **Code Review Process**
+- **Required Reviewers**: Minimum 1 reviewer for features, 2 for critical changes
+- **Review Checklist**:
+  - [ ] Code follows style guidelines
+  - [ ] Tests are included and passing
+  - [ ] Documentation is updated
+  - [ ] Security considerations addressed
+  - [ ] Performance impact assessed
+
+### **Testing Procedures**
+```bash
+# Unit tests
+npm test
+
+# Integration tests
+npm run test:integration
+
+# E2E tests
+npm run test:e2e
+
+# Coverage report
+npm run test:coverage
+```
+
+### **Deployment Procedures**
+```bash
+# Deploy to testnet
+npm run maschain:deploy:testnet
+
+# Deploy to mainnet (production)
+npm run maschain:deploy:mainnet
+
+# Verify deployment
+npm run maschain:verify
+```
+
+## 🔗 **MasChain L1 Integration**
+
+### **Smart Contract Development**
+- **Contract Creation**: Use MasChain Smart Contract Creation API
+- **Available Templates**: ERC20_TOKEN, MARKETPLACE, ORACLE
+- **Deployment**: Automated through MasChain Enterprise Portal
+
+### **Contract Types**
+1. **Energy Credit Token (EC)**
+   - Represents 1 kWh of energy
+   - Mintable by verified energy producers
+   - Transferable between users
+
+2. **Energy Marketplace**
+   - Handles offer creation and matching
+   - Automated trade execution
+   - Fee collection and distribution
+
+3. **Energy Oracle**
+   - Validates IoT meter data
+   - Ensures data integrity
+   - Manages authorized validators
+
+### **API Integration**
+```typescript
+// MasChain API client example
+import { getMasChainConfig } from './config/blockchain'
+
+const config = getMasChainConfig()
+const response = await config.apiClient.post('/api/v1/token/create', {
+  name: 'Energy Credit',
+  symbol: 'EC',
+  decimals: 3,
+  totalSupply: 1000000000
+})
+```
+
+### **Transaction Management**
+- **Confirmation Time**: < 3 seconds with PoA consensus
+- **Transaction Fees**: Significantly lower than Ethereum
+- **Error Handling**: Comprehensive retry logic and fallbacks
+
+## 🎨 **Frontend Development Standards**
+
+### **React/Next.js Conventions**
+```typescript
+// Component structure
+interface ComponentProps {
+  // Props definition
+}
+
+export const ComponentName: FC<ComponentProps> = ({ prop1, prop2 }) => {
+  // Hooks at the top
+  const [state, setState] = useState()
+  const { data } = useCustomHook()
+  
+  // Event handlers
+  const handleClick = useCallback(() => {
+    // Handler logic
+  }, [dependencies])
+  
+  // Render
+  return (
+    <div className="component-container">
+      {/* JSX content */}
+    </div>
+  )
+}
+```
+
+### **State Management with Zustand**
+```typescript
+// Store definition
+interface EnergyStore {
+  energyData: EnergyData
+  offers: EnergyOffer[]
+  fetchEnergyData: () => Promise<void>
+  createOffer: (offer: CreateOfferData) => Promise<void>
+}
+
+export const useEnergyStore = create<EnergyStore>((set, get) => ({
+  energyData: initialEnergyData,
+  offers: [],
+  fetchEnergyData: async () => {
+    // Fetch logic
+  },
+  createOffer: async (offer) => {
+    // Create offer logic
+  }
+}))
+```
+
+### **UI/UX Guidelines**
+- **Design System**: Tailwind CSS with custom energy trading theme
+- **Color Palette**: 
+  - Primary: Energy blue (#0066CC)
+  - Secondary: Solar orange (#FF9500)
+  - Success: Green (#10B981)
+  - Warning: Yellow (#F59E0B)
+  - Error: Red (#EF4444)
+
+- **Component Library**: Custom components built on Tailwind
+- **Responsive Design**: Mobile-first approach
+- **Accessibility**: WCAG 2.1 AA compliance
+
+## 🔧 **Backend API Guidelines**
+
+### **Node.js/Express Structure**
+```typescript
+// Route handler example
+import express from 'express'
+import { validateRequest } from '../middleware/validation'
+import { authenticateUser } from '../middleware/auth'
+
+const router = express.Router()
+
+router.post('/energy/offers', 
+  authenticateUser,
+  validateRequest(createOfferSchema),
+  async (req, res) => {
+    try {
+      const offer = await energyService.createOffer(req.body)
+      res.json({ success: true, data: offer })
+    } catch (error) {
+      res.status(500).json({ error: error.message })
+    }
+  }
+)
+```
+
+### **Database Schema**
+```sql
+-- Energy offers table
+CREATE TABLE energy_offers (
+    id SERIAL PRIMARY KEY,
+    offer_id VARCHAR(64) UNIQUE NOT NULL,
+    seller_wallet VARCHAR(64) NOT NULL,
+    energy_amount DECIMAL(10,3) NOT NULL,
+    price_per_kwh DECIMAL(8,6) NOT NULL,
+    offer_type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### **Error Handling**
+```typescript
+// Standardized error responses
+interface ApiError {
+  error: string
+  code: string
+  details?: any
+  timestamp: string
+}
+
+// Error middleware
+export const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+  const apiError: ApiError = {
+    error: error.message,
+    code: error.name,
+    timestamp: new Date().toISOString()
+  }
+  
+  res.status(500).json(apiError)
+}
+```
+
+## 🌐 **IoT Integration Protocols**
+
+### **MQTT Communication**
+```python
+# Python MQTT client example
+import paho.mqtt.client as mqtt
+import json
+
+class EnergyMeterClient:
+    def __init__(self, broker_host, broker_port=1883):
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        
+    def publish_reading(self, meter_id, reading_value, reading_type):
+        payload = {
+            'meter_id': meter_id,
+            'reading_value': reading_value,
+            'reading_type': reading_type,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+        
+        self.client.publish(f'energy/meters/{meter_id}/readings', 
+                          json.dumps(payload))
+```
+
+### **Data Validation**
+- **Cryptographic Signatures**: All meter readings must be signed
+- **Timestamp Validation**: Readings must be within acceptable time window
+- **Range Validation**: Energy values must be within realistic bounds
+- **Duplicate Detection**: Prevent replay attacks
+
+### **Oracle Service Integration**
+```typescript
+// Oracle data submission
+export async function submitMeterReading(
+  meterId: string,
+  readingValue: number,
+  readingType: 'production' | 'consumption',
+  signature: string
+): Promise<string> {
+  const config = getMasChainConfig()
+  
+  const readingData = {
+    meterId,
+    readingValue,
+    readingType,
+    timestamp: new Date().toISOString(),
+    signature
+  }
+  
+  const response = await config.apiClient.post('/api/v1/oracle/submit-reading', readingData)
+  return response.data.transactionId
+}
+```
+
+## 🔒 **Security & Best Practices**
+
+### **Blockchain Security**
+- **Private Key Management**: Never store private keys in code or logs
+- **Transaction Validation**: Verify all transaction parameters before submission
+- **Rate Limiting**: Implement API rate limiting to prevent abuse
+- **Input Sanitization**: Validate and sanitize all user inputs
+
+### **API Security**
+```typescript
+// Security middleware
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
+
+// Security headers
+app.use(helmet())
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+})
+app.use('/api/', limiter)
+```
+
+### **Data Encryption**
+- **TLS/SSL**: All communications must use HTTPS
+- **Database Encryption**: Sensitive data encrypted at rest
+- **API Keys**: Secure storage and rotation of API credentials
+
+### **Wallet Integration Security**
+- **Connection Validation**: Verify wallet authenticity before transactions
+- **Transaction Confirmation**: Always confirm transactions with users
+- **Balance Verification**: Check sufficient balance before trades
+
+## 🐛 **Troubleshooting & Common Issues**
+
+### **MasChain Connection Issues**
+```bash
+# Check API connectivity
+curl -H "Authorization: Bearer $MASCHAIN_API_KEY" \
+     -H "X-API-Secret: $MASCHAIN_API_SECRET" \
+     https://service-testnet.maschain.com/api/v1/health
+```
+
+**Common Solutions**:
+- Verify API credentials in .env file
+- Check network connectivity to MasChain endpoints
+- Ensure project subscription is active
+
+### **Smart Contract Deployment Failures**
+**Symptoms**: Contract creation returns error
+**Solutions**:
+- Verify sufficient account balance
+- Check contract parameters are valid
+- Ensure API key has contract creation permissions
+
+### **IoT Integration Issues**
+**Symptoms**: Meter readings not appearing in system
+**Solutions**:
+- Check MQTT broker connectivity
+- Verify meter client configuration
+- Validate data format and signatures
+
+### **Frontend Wallet Connection**
+**Symptoms**: Wallet connection fails
+**Solutions**:
+- Check if MasWallet extension is installed
+- Verify network configuration matches backend
+- Clear browser cache and localStorage
+
+### **Performance Optimization**
+- **Database Indexing**: Ensure proper indexes on frequently queried columns
+- **Caching Strategy**: Use Redis for frequently accessed data
+- **API Optimization**: Implement pagination and filtering
+- **Frontend Optimization**: Use React.memo and useMemo for expensive operations
+
+### **Debugging Procedures**
+```bash
+# Backend logs
+npm run backend:logs
+
+# Frontend development tools
+npm run dev -- --debug
+
+# Database queries
+npm run db:debug
+
+# MasChain transaction status
+npm run maschain:tx-status <transaction_id>
+```
+
+## 📞 **Support & Resources**
+
+### **Documentation Links**
+- **MasChain Docs**: https://docs.maschain.com
+- **Enterprise Portal**: https://portal.maschain.com
+- **Project Repository**: https://github.com/ifwan87/mchain-energy
+
+### **Development Tools**
+- **MasChain Explorer**: https://explorer.maschain.com
+- **API Testing**: Postman collection available in `/docs/api/`
+- **Database Admin**: pgAdmin for PostgreSQL management
+
+### **Team Contacts**
+- **Technical Lead**: technical@energy-trading.com
+- **DevOps**: devops@energy-trading.com
+- **Security**: security@energy-trading.com
+
+### **Emergency Procedures**
+- **Production Issues**: Contact technical lead immediately
+- **Security Incidents**: Follow incident response plan in `/docs/security/`
+- **Data Breaches**: Notify security team within 1 hour
+
+---
+
+**Last Updated**: January 2025
+**Version**: 2.0.0
+**Maintainer**: MasChain Energy Trading Platform Team
