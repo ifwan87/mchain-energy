@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "Blockchain-based energy trading platform using Maaschain",
   "private": true,
-  "homepage": "https://ifwan87.github.io/mchain-energy",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,9 +19,7 @@
     "maschain:deploy": "ts-node scripts/deploy-maschain-contracts.ts",
     "maschain:deploy:testnet": "MASCHAIN_ENVIRONMENT=testnet ts-node scripts/deploy-maschain-contracts.ts",
     "maschain:deploy:mainnet": "MASCHAIN_ENVIRONMENT=mainnet ts-node scripts/deploy-maschain-contracts.ts",
-    "maschain:init": "ts-node scripts/init-maschain.ts",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d out"
+    "maschain:init": "ts-node scripts/init-maschain.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -49,7 +46,6 @@
     "autoprefixer": "^10.4.16",
     "eslint": "8.51.0",
     "eslint-config-next": "14.0.0",
-    "gh-pages": "^6.3.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.31",
