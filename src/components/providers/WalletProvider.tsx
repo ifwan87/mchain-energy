@@ -1,54 +1,54 @@
 'use client'
 
-import { FC, ReactNode, useMemo } from 'react'
-import { ConnectionProvider, WalletProvider as SolanaWalletProvider } from '@solana/wallet-adapter-react'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  TorusWalletAdapter,
-  LedgerWalletAdapter,
-} from '@solana/wallet-adapter-wallets'
-import { clusterApiUrl } from '@solana/web3.js'
+import { FC, ReactNode, createContext, useContext, useState, useMemo } from 'react'
 
-// Import wallet adapter CSS
-require('@solana/wallet-adapter-react-ui/styles.css')
+// Function to generate a random, realistic-looking wallet address
+const generateRandomAddress = () => {
+  const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let address = 'DEMO';
+  for (let i = 0; i < 40; i++) {
+    address += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return address;
+};
+
+interface WalletContextType {
+  connected: boolean
+  publicKey: string
+  connect: () => void
+  disconnect: () => void
+}
+
+const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
 interface WalletProviderProps {
   children: ReactNode
 }
 
 export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
-  // Get network from environment or default to devnet
-  const network = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as WalletAdapterNetwork) || WalletAdapterNetwork.Devnet
-  
-  // Get RPC endpoint
-  const endpoint = useMemo(() => {
-    if (process.env.NEXT_PUBLIC_RPC_ENDPOINT) {
-      return process.env.NEXT_PUBLIC_RPC_ENDPOINT
-    }
-    return clusterApiUrl(network)
-  }, [network])
+  const [connected, setConnected] = useState(false)
+  // Generate a memoized random address so it doesn't change on re-renders
+  const publicKey = useMemo(() => generateRandomAddress(), []);
 
-  // Configure supported wallets
-  const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter({ network }),
-      new TorusWalletAdapter(),
-      new LedgerWalletAdapter(),
-    ],
-    [network]
-  )
+  const connect = () => {
+    setConnected(true)
+  }
+
+  const disconnect = () => {
+    setConnected(false)
+  }
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <SolanaWalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          {children}
-        </WalletModalProvider>
-      </SolanaWalletProvider>
-    </ConnectionProvider>
+    <WalletContext.Provider value={{ connected, publicKey, connect, disconnect }}>
+      {children}
+    </WalletContext.Provider>
   )
+}
+
+export const useWallet = () => {
+  const context = useContext(WalletContext)
+  if (context === undefined) {
+    throw new Error('useWallet must be used within a WalletProvider')
+  }
+  return context
 }

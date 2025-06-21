@@ -1,3 +1,35 @@
+# ⚡ MasChain Energy Trading Platform - Hackathon MVP
+
+## 🚀 What is this?
+A peer-to-peer energy trading demo on blockchain, simulating live trades, IoT meter data, and a beautiful dashboard. Built for hackathons, deployable as a static site on GitHub Pages.
+
+## 🌟 Features
+- Live energy trading interface (simulated)
+- Real-time market stats and offers
+- IoT meter data simulation
+- Mobile-first, beautiful UI
+- No backend required (all in-browser)
+- Deployable to GitHub Pages
+
+## 🛠️ How to Run Locally
+```bash
+npm install
+npm run build
+npm run export
+npx serve out
+```
+
+## 🌍 Deploy to GitHub Pages
+1. Set `output: 'export'` and `trailingSlash: true` in `next.config.js` (already done)
+2. Run:
+   ```bash
+   npm run build && npm run export
+   ```
+3. Push the `out/` folder to your `gh-pages` branch or use a deploy action
+4. Set GitHub Pages to serve from `/out` or `/docs` as needed
+
+---
+
 # Blockchain-Based Energy Trading Platform Using MasChain L1
 
 A comprehensive platform for peer-to-peer energy trading using MasChain L1 blockchain technology, IoT integration, and smart contracts.

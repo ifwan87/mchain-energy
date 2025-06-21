@@ -1,4 +1,11 @@
 import { create } from 'zustand'
+import { useEffect } from 'react'
+
+declare global {
+  interface Window {
+    __maschainMvpSim?: boolean;
+  }
+}
 
 export interface EnergyReading {
   id: string
@@ -280,3 +287,30 @@ export const useEnergyStore = create<EnergyStore>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
 }))
+
+// IoT/market simulation: periodically update stats (browser only)
+if (typeof window !== 'undefined' && !window.__maschainMvpSim) {
+  window.__maschainMvpSim = true;
+  setInterval(() => {
+    useEnergyStore.setState((state) => ({
+      energyData: {
+        ...state.energyData,
+        totalProduction: state.energyData.totalProduction + Math.random() * 2,
+        totalConsumption: state.energyData.totalConsumption + Math.random() * 1.5,
+        currentBalance: Math.max(
+          state.energyData.currentBalance + (Math.random() - 0.5) * 2,
+          0
+        ),
+        creditsEarned: state.energyData.creditsEarned + Math.random() * 2,
+        creditsSpent: state.energyData.creditsSpent + Math.random() * 1.5,
+        carbonOffset: state.energyData.carbonOffset + Math.random() * 1.2,
+      },
+      marketData: {
+        ...state.marketData,
+        totalOffers: 10 + Math.floor(Math.random() * 10),
+        totalVolumeTraded: state.marketData.totalVolumeTraded + Math.random() * 10,
+        averagePrice: 0.08 + Math.random() * 0.12,
+      },
+    }))
+  }, 3000)
+}
