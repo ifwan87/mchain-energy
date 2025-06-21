@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
+const repo = 'mchain-energy'
+const assetPrefix = `/${repo}/`
+const basePath = `/${repo}`
 const nextConfig = {
   output: 'export',
+  assetPrefix: assetPrefix,
+  basePath: basePath,
   trailingSlash: true,
   images: {
     unoptimized: true
